@@ -71,7 +71,7 @@ namespace Rivet {
                 NBHadBinning.push_back(i-0.5);
 
             pt_N = bookHisto2D("BHad_mult_vs_b-jet-pT", Ptbining, NBHadBinning,"BHad_mult_vs_b-jet-pT","pt","N");
-                      
+            ptbj_ptBHad = bookHisto2D("pT_b-jet_vs_pT-BHad",Ptbinig, Ptbning,"pT_b-jet_vs_pT-BHad","b-jet_pT","BHad_pT");          
             _h_dsigdphi = bookHisto1D("dsigmadphi_jets",50,0,M_PI,"dsigma/dphi for jets", "phi","dsigma/dphi");
 		      _h_dsigdphi_bjets = bookHisto1D("dsigmadphi_bjets",40,0,M_PI,"dsigma/dphi for b-jets", "phi","dsigma/dphi");                        
                       
@@ -131,6 +131,9 @@ namespace Rivet {
                        // cout<<"deltaphi_jets= "<<deltaphi_jets<<endl;
                   }
 
+                  const double pT_BHad; 
+                  bool BHad_lead = true;
+                 
                   foreach(const Particle& b, bHadrons) { 
 
                          double difference = deltaR(j.momentum(), b.momentum());
@@ -139,6 +142,11 @@ namespace Rivet {
                                btag=true;
                                onebtag=true;  
 				                   ++BHad;
+                               if(BHad_lead){
+                                  pT_BHad = b.momentum().pT();
+                                  BHad_lead = false; 
+			          cout << "*****************  PT_BHad = "<< pT_BHad <<"***********************"<<endl;		
+                               }
                            }
                   }
 
@@ -176,7 +184,7 @@ namespace Rivet {
 
                          pt_N->fill(ptB,BHad,weight);
                         _h_p1d -> fill(ptB,BHad, weight);
-                           
+                         ptbj_ptBHad -> fill(ptB, pT_BHad, weight);            
 
                    }
 
@@ -253,7 +261,8 @@ namespace Rivet {
       
       Profile1DPtr _h_p1d;
       Histo2DPtr pt_N;							      
-
+      Histo2DPtr ptbj_ptBHad;
+      
       Histo1DPtr _h_dsigdphi_bjets;
       Histo1DPtr _h_dsigdphi;
 
